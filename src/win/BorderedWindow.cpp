@@ -28,6 +28,14 @@ void BorderedWindow::print(const std::string& s, const Point& relativePosition) 
 	contentPane.print(s, relativePosition);
 }
 
+void BorderedWindow::attributeOn(int value) {
+	contentPane.attributeOn(value);
+}
+
+void BorderedWindow::attributeOff(int value) {
+	contentPane.attributeOff(value);
+}
+
 void BorderedWindow::print(const std::string& s) {
 	contentPane.print(s);
 }

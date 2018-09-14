@@ -18,6 +18,8 @@ namespace win {
 		virtual void moveCursorTo(const Point& p);
 		virtual void activateBlinking();
 		virtual void deactivateBlinking();
+		virtual void attributeOn(int value);
+		virtual void attributeOff(int value);
 
 		virtual void repaint();
 	};

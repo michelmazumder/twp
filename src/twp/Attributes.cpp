@@ -1,7 +1,8 @@
 #include "twp/Attributes.h"
+#include <ncurses.h>
 
 using namespace twp;
 
-Italic::Italic(const tdm::Cursor& start, const tdm::Cursor& end) :
-	tdm::Attributes(start, end)
+Underline::Underline(const tdm::AttributedRope *r) :
+	tdm::Attribute(r, TYPE_ID, A_UNDERLINE)
 {}

@@ -50,8 +50,8 @@ void TwpApplication::onKeyPressed(int key) {
 			document.left();
 			document.deleteAtCurrentPos();
 			break;
-		case CTRL('i'):
-			document.toggleItalic();
+		case CTRL('u'):
+			document.toggleUnderline();
 			break;
 
 		default:

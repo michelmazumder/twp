@@ -7,96 +7,93 @@
 using namespace std;
 using namespace tdm;
 
+Cursor::Cursor(const Rope* _rope, size_t _position) 
+	: rope(_rope), positionAbsolute(_position)
+{}
+
 long Cursor::distance(const Cursor& b) const {
+	if(rope != b.rope) throw InvalidComparisonBetweenDifferentRopes();
 	return positionAbsolute - b.positionAbsolute;
 }
 
 bool Cursor::operator== (const Cursor& b) const {
-	return (rope == b.rope) &&
-		(chunk == b.chunk) &&
-		(positionRelative == b.positionRelative) &&
-		(positionAbsolute == b.positionAbsolute);
+	if(rope != b.rope) throw InvalidComparisonBetweenDifferentRopes();
+	return positionAbsolute == b.positionAbsolute;	
 }
 
 Cursor& Cursor::operator++ () {
-	if(positionAbsolute < rope->size()) {
+	if(positionAbsolute < rope->size())
 		positionAbsolute++;
-
-		if(positionRelative < chunk->size()) {
-			positionRelative++;
-		}
-		else {
-			assert(chunk->next() != nullptr); // perchè positionAbsolute < rope->size()
-			chunk = chunk->next();
-			positionRelative = 0;
-		}
-	}
-
 	return *this;
 }
 
 Cursor& Cursor::operator-- () {
-	if(positionAbsolute > 0) {
+	if(positionAbsolute > 0)
 		positionAbsolute--;
-
-		if(positionRelative > 0) {
-			positionRelative--;
-		}
-		else {
-			assert(chunk->previous() != nullptr);
-			chunk = chunk->previous();
-			positionRelative = chunk->size() - 1;
-		}
-	}
-
 	return *this;
 }
 
-Attribute::Attribute(const Cursor& start, const Cursor& end) :
-	_start(start), _end(end)
+Attribute::Attribute(const AttributedRope *r, int tid, int _ncursesValue) 
+	: _start(r, 0), _end(r, 0), _tid(tid), ncursesValue(_ncursesValue)
 {}
 
-void Attribute::endIncrease() {
-	++_end;
+Attribute::Attribute(const Cursor& activationPos, int tid, int _ncursesValue) :
+	_start(activationPos), _end(activationPos), _tid(tid), ncursesValue(_ncursesValue)
+{}
+
+Attribute::Attribute(const Cursor& start, const Cursor& end, int tid, int _ncursesValue) :
+	_start(start), _end(end), _tid(tid), ncursesValue(_ncursesValue)
+{}
+
+void Attribute::setStartPosition(const Cursor& s) {
+	_start = s;
 }
 
-void Attribute::endDecrease() {
-	--_end;
+void Attribute::setEndPosition(const Cursor& e) {
+	_end = e;
 }
 
-void Attribute::startIncrease() {
-	++_start;
+std::list<Attribute *> AttributedRope::getAttributesForPosition(size_t position) {
+	std::list<Attribute *> rt;
+	for(auto att : attributeList) {
+		if(
+			(att.start().positionAbsolute <= position) &&
+			(att.end().positionAbsolute >= position) ) {
+			rt.push_back(&att);
+		}
+	}
+	return rt;
 }
 
-void Attribute::startDecrease() {
-	--_start;
+void AttributedRope::attributeOn(Attribute& attribute, size_t currentPosition) {
+	util::MethodLogger m(__PRETTY_FUNCTION__);
+	assert(currentPosition <= size());
+	attribute.setStartPosition(getCursorForPosition(currentPosition));
+	attribute.setEndPosition(getCursorForPosition(currentPosition));
+	attributeList.push_back(attribute);
+}
+
+// in append mode
+void AttributedRope::attributeOn(Attribute& attribute) {
+	util::MethodLogger m(__PRETTY_FUNCTION__);
+	attributeOn(attribute, size() - 1);
+}
+
+void AttributedRope::attributeOff(Attribute& attribute, size_t currentPosition) {
+	util::MethodLogger m(__PRETTY_FUNCTION__);
+	assert(currentPosition <= size());
+	attribute.setEndPosition(getCursorForPosition(currentPosition-1));
+	attributeList.push_back(attribute);
+}
+
+// in append mode
+void AttributedRope::attributeOff(Attribute& attribute) {
+	attributeOff(attribute, size() - 1);
 }
 
 Cursor AttributedRope::getCursorForPosition(size_t position) {
-	assert(position < size());
-	Cursor c;
-	c.positionAbsolute = position;
-	ChunkPos cp = getChunkForPosition(position);
-	c.chunk = cp.chunk;
-	c.positionRelative = position - cp.startingPos;
-	assert(c.positionRelative <= c.chunk->size());
-	return c;
-}
-
-void AttributedRope::toggle(std::shared_ptr<Attribute> attribute, size_t currentPosition) {
-	auto it = std::find(activeAttributes.begin(), activeAttributes.end(), attribute);
-	if(it != activeAttributes.end()) {
-		// elemento presente, switch off
-		activeAttributes.remove(attribute);
-	}
-	else {
-		// switch on
-		// arriva già con le coordinate giuste
-		assert(attribute->start() == attribute->end());
-		assert(attribute->start().positionAbsolute == currentPosition);
-
-		activeAttributes.push_back(attribute);
-	}
+	assert(position <= size());
+	return Cursor(this, position);
 }
 
 void AttributedRope::append(CharType character) {

@@ -1,29 +1,31 @@
 #include "twp/Document.h"
 #include "util/MethodLogger.h"
+#include "twp/Attributes.h"
 
 using namespace twp;
 
 
 Document::Document() 
 	: currentEditingPosition(0), defragCompleted(true) {
-
 }
 
-void Document::toggleItalic() {
+void Document::toggleUnderline() {
+	// recupero tutti gli attributi attivi nella currentEditingPosition
 
-	if(activeAttributes.italic.get() == nullptr) {
-
-		tdm::Cursor c = text.getCursorForPosition(currentEditingPosition);
-
-		activeAttributes.italic = std::shared_ptr<tdm::Attribute>(new twp::Italic(c, c));
-		text.toggle(activeAttributes.italic, currentEditingPosition);
+	bool wasActive = false;
+	auto activeAttributes = text.getAttributesForPosition(currentEditingPosition);
+	for(auto att : activeAttributes) {
+		if(att->getTypeId() == Underline::TYPE_ID) {
+			assert(!wasActive);
+			att->setEndPosition(text.getCursorForPosition(currentEditingPosition - 1));
+			wasActive = true;
+		}
 	}
-	else {
-		text.toggle(activeAttributes.italic, currentEditingPosition);
-		activeAttributes.italic = std::shared_ptr<tdm::Attribute>(nullptr);
+
+	if(!wasActive) {
+		Underline attr(&text);
+		text.attributeOn(attr, currentEditingPosition);
 	}
-
-
 }
 
 void Document::debugDump() {
@@ -49,40 +51,26 @@ void Document::end() {
 }
 
 void Document::insertChar(char c) {
-	util::MethodLogger m(__PRETTY_FUNCTION__);
-	m.log() << "Char to insert = " << c;
-	m.log() << "Current editing position = " << currentEditingPosition;
 	size_t beforeInsert = text.size();
 
 	if(currentEditingPosition == text.size()) {
-		m.log() << "Appending text";
 		text.append(c);
 		currentEditingPosition++;
 	}
 	else {
-		m.log() << "Inserting at position";
 		text.insertAt(c, currentEditingPosition++);
 	}
 
 	size_t afterInsert = text.size();
 
-	debugDump();
+	// debugDump();
 
-	if(afterInsert != (beforeInsert+1)) {
-		m.log() << "ERRORE NELLA STRUTTURA DELLA ROPE!!!";
-	}
 	assert(afterInsert == (beforeInsert+1));
 	defragCompleted = false;
 }
 
 void Document::deleteAtCurrentPos() {
-	util::MethodLogger m(__PRETTY_FUNCTION__);
-
 	size_t sz = text.size();
-	
-	m.log() << "sz = " << sz;
-	m.log() << "currentEditingPosition = " << currentEditingPosition;
-
 	if(currentEditingPosition < sz) {
 		text.removeAt(currentEditingPosition);
 	}
@@ -100,14 +88,13 @@ void Document::save() {
 
 void Document::defrag() {
 	if(defragCompleted) {
-		util::MethodLogger m(__PRETTY_FUNCTION__);
-		m.log() << " ** * * * * * * * *   DEFRAG * * * * * * * * * * *";
 		size_t sizeBeforeDefrag = text.size();
 		//debugDump();
 		defragCompleted = text.defrag();
 		size_t sizeAfterDefrag = text.size();
 		//debugDump();
 		if(sizeBeforeDefrag != sizeAfterDefrag) {
+			util::MethodLogger m(__PRETTY_FUNCTION__);
 			m.log() << "Size before defrag = " << sizeBeforeDefrag;
 			m.log() << "Size after defrag = " << sizeAfterDefrag;
 		}
@@ -122,6 +109,21 @@ void Document::render(win::Window& w) {
 	w.moveCursorTo(win::Point(0,0));
 
 	for(size_t currentRenderPos = 0; currentRenderPos < text.size(); currentRenderPos++) {
+
+		auto activeAttributes = text.getAttributesForPosition(currentEditingPosition);
+		for(auto att : activeAttributes) {
+			if(att->start().positionAbsolute == currentRenderPos) {
+				// attribute on
+				m.log() << ">>>>>> attribute on!";
+				w.attributeOn(att->getNcursesValue());
+			}
+			if(att->end().positionAbsolute == currentRenderPos) {
+				// attribute off
+				m.log() << "<<<<<< attribute off!";
+				w.attributeOff(att->getNcursesValue());
+			}
+		}
+		
 		if(currentRenderPos == currentEditingPosition) {
 			w.activateBlinking();
 			cursorDone = true;

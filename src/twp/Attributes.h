@@ -2,10 +2,10 @@
 
 #include "tdm/AttributedRope.h"
 
-
 namespace twp {
-	class Italic : public tdm::Attribute {
+	class Underline : public tdm::Attribute {
 	public:
-		Italic(const tdm::Cursor& start, const tdm::Cursor& end);
+		static const int TYPE_ID = 1;
+		Underline(const tdm::AttributedRope *r);
 	};
 }

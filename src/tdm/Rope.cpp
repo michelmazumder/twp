@@ -69,10 +69,6 @@ Rope::ChunkPos Rope::getChunkForPosition(size_t position) const {
 }
 
 void Rope::insertAt(CharType character, size_t position) {
-
-	util::MethodLogger m(__PRETTY_FUNCTION__);
-	m.log() << "Inserisco '" << (char) character << "' alla posizione = " << position
-		<< ", dimensione Rope = " << size();
 	if(position == size()) {
 		append(character);
 	}
@@ -85,34 +81,21 @@ void Rope::insertAt(CharType character, size_t position) {
 		firstChunk = newFirst;
 	}
 	else {
-		if(position > size()) {
-			m.log() << "Posizione non valida: " << position 
-				<< " dimensione text = " << size();
-		}
 		assert(position <= size());
 		if(position > size()) throw InvalidPositionException();
-
 		ChunkPos c = getChunkForPosition(position);
 		assert(c.chunk != nullptr);
-
 		size_t insPosInChunk = position - c.startingPos;
-		m.log() << "Posizione di inserimento in chunk = " << insPosInChunk;
-
 		const_cast<Chunk *>(c.chunk)->insertAt(character, insPosInChunk);
 	}
 	assert(checkLinks());
 }
 
 void Rope::removeAt(size_t position) {
-	util::MethodLogger m(__PRETTY_FUNCTION__);
-
 	if(size() < 1) return;
 
 	assert(position < size());
 	if(position >= size()) throw InvalidPositionException();
-
-	m.log() << "* * * * * * * * *";
-	m.log() << "Rimuovo carattere = '" << (char) get(position) << "'";
 
 	ChunkPos affectedChunk = getChunkForPosition(position);
 	
@@ -124,34 +107,24 @@ void Rope::removeAt(size_t position) {
 
 	assert(relativePos < affectedChunk.chunk->size());
 
-	m.log() << "relativePos = " << relativePos;
-
 	Chunk *modChunk = const_cast<Chunk *>(affectedChunk.chunk);
 	if(relativePos == 0) {
 		modChunk->deleteFirstChar();
 
 		if(modChunk->size() == 0 && modChunk != firstChunk) {
 			// cancello questo chunk
-			m.log() << "Sono nel caso in cui devo cancellare un chunk";
 			deleteChunkWithChecks(modChunk);
 		}
 	}
 	else if(relativePos == (affectedChunk.chunk->size() - 1)) {
-		m.log() << "Sono nel caso in cui accorcio dalla coda";
 		modChunk->deleteLastChar();
 	}
 	else {
-		m.log() << "Sono nel caso in cui separo due chunk";
 		// devo separare in due chunk
 		Chunk *secondPart = new Chunk(modChunk, const_cast<Chunk *>(modChunk->next()));
-		m.log() << "...copio i dati dalla posizione realtivePos+1 => " << (relativePos+1)
-			<< " fino alla posizione size() => " << affectedChunk.chunk->size();
 		for(auto i = relativePos+1 ; i < affectedChunk.chunk->size(); i++) {
 			auto cxx = affectedChunk.chunk->get(i);
-			m.log() << "...carattere all posizione " << i << " = " << (char) cxx;
-			// secondPart->append(affectedChunk.chunk->get(i));
 			secondPart->append(cxx);
-			m.log() << "..second parti size = " << secondPart->size();
 		}
 		modChunk->assignNextChunk(secondPart);
 		modChunk->trunkAt(relativePos);
@@ -160,9 +133,6 @@ void Rope::removeAt(size_t position) {
 }
 
 void Rope::deleteChunkWithChecks(Chunk *delMe) {
-	util::MethodLogger m(__PRETTY_FUNCTION__);
-	m.log() << "Cancello chunk " << delMe;
-	m.log() << "Size prima della cancellazione: " << size();
 	if(delMe == nullptr) return;
 
 	assert(delMe->previous() != nullptr);
@@ -175,7 +145,6 @@ void Rope::deleteChunkWithChecks(Chunk *delMe) {
 		const_cast<Chunk *>(delMe->next())
 			->assignPreviousChunk(const_cast<Chunk *>(delMe->previous()));
 	delete delMe;
-	m.log() << "Size dopo la cancellazione: " << size();
 }
 
 void Rope::debugDump() const {
@@ -193,26 +162,20 @@ void Rope::debugDump() const {
 }
 
 bool Rope::defrag() {
-
-	util::MethodLogger m(__PRETTY_FUNCTION__);
 	size_t sizeBefore = size();
 	const Chunk *current = firstChunk;
 
 	while(current != nullptr) {
 		if((current != firstChunk) && (current->size() == 0)) {
-			m.log() << "Chunk vuoto (non il primo) da cancellare: " << current;
 			deleteChunkWithChecks(const_cast<Chunk *>(current));
 			assert(sizeBefore == size());
 			assert(checkLinks());
 			return false;
 		}
 
-		// se c'è dello spazio all'inizio
-		m.log() << "Compattazione chunk corrente";
 		const_cast<Chunk *>(current)->compact();
 		assert(sizeBefore == size());
 
-		m.log() << "Se ho spazio disponibile, compatto il successivo";
 		while( (current->avail() > 0) && (current->next() != nullptr) && (current->next()->size() > 0)) {
 			// vado a prendere dati dal successivo e li copio qui
 			const_cast<Chunk *>(current)->append(current->next()->get(0));

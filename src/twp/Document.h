@@ -5,18 +5,11 @@
 #include <memory>
 #include "win/Window.h"
 #include "tdm/AttributedRope.h"
-#include "twp/Attributes.h"
 
 namespace twp {
 
 	class Document {
 
-		struct ActiveAttributes {
-			std::shared_ptr<tdm::Attribute> italic;
-		};
-
-		ActiveAttributes activeAttributes;
-	
 	protected:
 		bool dirty;
 		std::string name;
@@ -33,7 +26,7 @@ namespace twp {
 		void right();
 		void home();
 		void end();
-		void toggleItalic();
+		void toggleUnderline();
 		
 		void save();
 		void debugDump();

@@ -71,6 +71,14 @@ void Window::print(const std::string& s) {
 	}
 }
 
+void Window::attributeOn(int value) {
+	wattron(ncursesWindow, value);
+}
+
+void Window::attributeOff(int value) {
+	wattroff(ncursesWindow, value);
+}
+
 void Window::moveCursorTo(const Point& p) {
 	if(ncursesWindow != NULL) {
 		wmove(ncursesWindow, p.row, p.col);

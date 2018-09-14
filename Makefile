@@ -13,7 +13,7 @@ clean:
 
 twp: src/main.cpp $(DEST_DIR)/obj/TwpApplication.o \
 		$(DEST_DIR)/obj/m3d_Thread.o $(DEST_DIR)/obj/m3d_Semaforo.o $(DEST_DIR)/obj/m3d_Lock.o \
-		$(DEST_DIR)/obj/twp_Document.o $(DEST_DIR)/obj/twp_Elements.o \
+		$(DEST_DIR)/obj/twp_Document.o $(DEST_DIR)/obj/twp_Elements.o $(DEST_DIR)/obj/twp_Attributes.o \
 		$(DEST_DIR)/obj/util_MethodLogger.o $(DEST_DIR)/obj/util_StringExtensions.o $(DEST_DIR)/obj/util_VersionDataObject.o \
 		$(DEST_DIR)/obj/win_Screen.o $(DEST_DIR)/obj/win_Window.o $(DEST_DIR)/obj/win_Application.o $(DEST_DIR)/obj/win_BorderedWindow.o \
 		$(DEST_DIR)/obj/tdm_Chunk.o $(DEST_DIR)/obj/tdm_Rope.o $(DEST_DIR)/obj/tdm_AttributedRope.o

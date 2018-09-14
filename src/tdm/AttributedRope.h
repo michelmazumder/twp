@@ -10,45 +10,58 @@
 
 namespace tdm {
 
+	class InvalidComparisonBetweenDifferentRopes : public std::exception
+	{};
+
 	struct Cursor {
 		const Rope *rope;
-		const Chunk *chunk;
-		size_t positionRelative;
 		size_t positionAbsolute;
 
-		Cursor& operator++ ();
-		Cursor& operator-- ();
+		Cursor(const Rope* rope, size_t position);
 
 		long distance(const Cursor& b) const;
 		bool operator== (const Cursor& b) const;
+		Cursor& operator++ ();
+		Cursor& operator-- ();
 	};
 
+	class AttributedRope;
 
 	class Attribute {
 
 	protected:
 		Cursor _start;
 		Cursor _end;
+		int _tid;
 
 	public:
-		Attribute(const Cursor& start, const Cursor& end);
-		void endIncrease();
-		void endDecrease();
-		void startIncrease();
-		void startDecrease();
+		Attribute(const AttributedRope *rope, int tid);
+		Attribute(const Cursor& activationPos, int tid);
+		Attribute(const Cursor& start, const Cursor& end, int tid);
 
-		const Cursor& start() const;
-		const Cursor& end() const;
+		void setStartPosition(const Cursor& start);
+		void setEndPosition(const Cursor& end);
+
+		inline const Cursor& start() const { return _start; }
+		inline const Cursor& end() const { return _end; }
+		inline Cursor& start() { return _start; }
+		inline Cursor& end() { return _end; }
+		inline int getTypeId() const { return _tid; }
 	};
 
 
 	class AttributedRope : public Rope {
 		
-		std::list<std::shared_ptr<Attribute>> activeAttributes;
+		std::list<Attribute> attributeList;
 
 	public:
-		void toggle(std::shared_ptr<Attribute> attribute, size_t currentPosition);
+		void attributeOn(Attribute& attribute, size_t currentPosition);
+		void attributeOn(Attribute& attribute); // in append mode
+		void attributeOff(Attribute& attribute, size_t currentPosition);
+		void attributeOff(Attribute& attribute); // in append mode
+
 		Cursor getCursorForPosition(size_t position);
+		std::list<Attribute *> getAttributesForPosition(size_t position);
 
 		virtual void append(CharType character);
 		virtual void insertAt(CharType character, size_t position);

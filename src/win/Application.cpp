@@ -18,9 +18,9 @@ Application::Application(const std::string& _appName, const util::VersionDataObj
 
 
 Application::~Application() {
-	if(mainWindow != 0) {
+	if(mainWindow != nullptr) {
 		delete mainWindow;
-		mainWindow = 0;
+		mainWindow = nullptr;
 	}
 	endwin();			/* End curses mode		  */
 }
@@ -45,7 +45,7 @@ void Application::theJob() {
 
 		if(c != ERR) {
     		this->onKeyPressed(c);
-			if(mainWindow != 0) {
+			if(mainWindow != nullptr) {
 				mainWindow->repaint();
 			}
 		}
