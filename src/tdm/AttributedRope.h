@@ -33,11 +33,12 @@ namespace tdm {
 		Cursor _start;
 		Cursor _end;
 		int _tid;
+		int ncursesValue;
 
 	public:
-		Attribute(const AttributedRope *rope, int tid);
-		Attribute(const Cursor& activationPos, int tid);
-		Attribute(const Cursor& start, const Cursor& end, int tid);
+		Attribute(const AttributedRope *rope, int tid, int ncursesValue);
+		Attribute(const Cursor& activationPos, int tid, int ncursesValue);
+		Attribute(const Cursor& start, const Cursor& end, int tid, int ncursesValue);
 
 		void setStartPosition(const Cursor& start);
 		void setEndPosition(const Cursor& end);
@@ -47,6 +48,7 @@ namespace tdm {
 		inline Cursor& start() { return _start; }
 		inline Cursor& end() { return _end; }
 		inline int getTypeId() const { return _tid; }
+		inline int getNcursesValue() const { return ncursesValue; }
 	};
 
 

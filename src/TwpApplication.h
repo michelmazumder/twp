@@ -3,9 +3,6 @@
 #include "win/Application.h"
 #include "twp/Document.h"
 
-#ifndef CTRL
-#define CTRL(c) ((c) & 037)
-#endif
 
 
 class TwpApplication : public win::Application {

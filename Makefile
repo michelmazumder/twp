@@ -1,7 +1,7 @@
 CPPFLAGS=-std=c++17 -Isrc
 LPPFLAGS=${CPPFLAGS} -lpthread -lncurses
-DEST_DIR=/Users/michel/programmazione/twp
-#DEST_DIR=/Users/michel/Documents/Progetti\ Software/twp
+#DEST_DIR=/Users/michel/programmazione/twp
+DEST_DIR=/Users/michel/Documents/Progetti\ Software/twp
 TARGET_EXE_NAME=$(DEST_DIR)/twp
 
 all:

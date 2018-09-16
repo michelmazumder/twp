@@ -73,15 +73,6 @@ const CharType& Chunk::get(size_t position) const {
 	if(_begin >= _end) throw InvalidPositionException();
 	size_t idx = position + _begin;
 	
-	if(idx >= _end) {
-		util::MethodLogger m(__PRETTY_FUNCTION__);
-		m.log() << "Qui non va bene:";
-		m.log() << "posizione richiesta = " << position;
-		m.log() << "begin = " << _begin;
-		m.log() << "end = " << _end;
-		m.log() << "idx = " << idx;
-		m.log() << "chunk addr = " << this;
-	}
 	assert(idx < _end);
 	if(idx >= _end) throw InvalidPositionException();
 

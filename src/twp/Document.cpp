@@ -93,11 +93,13 @@ void Document::defrag() {
 		defragCompleted = text.defrag();
 		size_t sizeAfterDefrag = text.size();
 		//debugDump();
+		/*
 		if(sizeBeforeDefrag != sizeAfterDefrag) {
 			util::MethodLogger m(__PRETTY_FUNCTION__);
 			m.log() << "Size before defrag = " << sizeBeforeDefrag;
 			m.log() << "Size after defrag = " << sizeAfterDefrag;
 		}
+		*/
 		assert(sizeBeforeDefrag == sizeAfterDefrag);
 	}
 }
