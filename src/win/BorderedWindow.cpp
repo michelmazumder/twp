@@ -16,8 +16,9 @@ BorderedWindow::BorderedWindow(const Point& startingPoint, const Size& size)
 }
 
 void BorderedWindow::repaint() {
-	util::MethodLogger m(__PRETTY_FUNCTION__);
 	if(ncursesWindow != 0) {
+		util::MethodLogger m(__PRETTY_FUNCTION__);
+		m.log() << "Disegno BORDO";
 		box(ncursesWindow,0,0);
 		wrefresh(ncursesWindow);
 	}

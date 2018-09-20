@@ -8,4 +8,10 @@ namespace twp {
 		static const int TYPE_ID = 1;
 		Underline(const tdm::AttributedRope *r);
 	};
+
+	class Bold : public tdm::Attribute {
+	public:
+		static const int TYPE_ID = 2;
+		Bold(const tdm::AttributedRope *r);
+	};
 }

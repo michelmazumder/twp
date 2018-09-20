@@ -14,6 +14,7 @@ class TwpApplication : public win::Application {
 		// the view
 		virtual win::Window *createMainWindow();
 		virtual void idleCicle();
+		virtual void onInitComplete();
 
 	public:
 		TwpApplication();

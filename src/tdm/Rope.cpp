@@ -147,18 +147,19 @@ void Rope::deleteChunkWithChecks(Chunk *delMe) {
 	delete delMe;
 }
 
-void Rope::debugDump() const {
-	cerr << "****** DEBUG DUMP ******" << endl;
-	cerr << "Dimensione totale = " << size() << endl;
+std::ostream& Rope::debugDump(std::ostream& debugStream) const {
+	debugStream << "****** ROPE DEBUG DUMP ******" << endl;
+	debugStream << "Dimensione totale = " << size() << endl;
 
 	const Chunk *c = firstChunk;
 	int counter = 1;
 	while(c != nullptr) {
-		cerr << "\tChunk n. " << counter << endl;
-		c->debugDump();
+		debugStream << "\tChunk n. " << counter << endl;
+		c->debugDump(debugStream);
 		c = c->next();
 		counter++;
 	}
+	return debugStream;
 }
 
 bool Rope::defrag() {
@@ -227,9 +228,9 @@ const bool Rope::checkLinks() const {
 				util::MethodLogger m(__PRETTY_FUNCTION__);
 				m.log() << "Controllo link fallito: ";
 				m.log() << "THIS = ";
-				c->debugDump();
+				c->debugDump(cerr);
 				m.log() << "NEXT = ";
-				c->next()->debugDump();
+				c->next()->debugDump(cerr);
 				assert(c->next()->previous() == c);
 				return false;
 			}

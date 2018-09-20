@@ -11,27 +11,63 @@ Document::Document()
 
 void Document::toggleUnderline() {
 	// recupero tutti gli attributi attivi nella currentEditingPosition
-
+	util::MethodLogger m(__PRETTY_FUNCTION__);
+	m.log() << "Current editing position = " << currentEditingPosition;
 	bool wasActive = false;
 	auto activeAttributes = text.getAttributesForPosition(currentEditingPosition);
 	for(auto att : activeAttributes) {
 		if(att->getTypeId() == Underline::TYPE_ID) {
 			assert(!wasActive);
-			att->setEndPosition(text.getCursorForPosition(currentEditingPosition - 1));
+			att->setEndPosition(text.getCursorForPosition(currentEditingPosition));
 			wasActive = true;
 		}
 	}
 
+	Underline attr(&text);
 	if(!wasActive) {
-		Underline attr(&text);
+		m.log() << "Underline ON!";
 		text.attributeOn(attr, currentEditingPosition);
 	}
+	else {
+		m.log() << "Underline OFF!!";
+		text.attributeOff(attr, currentEditingPosition);
+	}
+
+	debugDump(std::cerr);
 }
 
-void Document::debugDump() {
+void Document::toggleBold() {
+	// recupero tutti gli attributi attivi nella currentEditingPosition
 	util::MethodLogger m(__PRETTY_FUNCTION__);
-	m.log() << "Current document editing position: " << currentEditingPosition;
-	text.debugDump();
+	m.log() << "Current editing position = " << currentEditingPosition;
+	bool wasActive = false;
+	auto activeAttributes = text.getAttributesForPosition(currentEditingPosition);
+	for(auto att : activeAttributes) {
+		if(att->getTypeId() == Bold::TYPE_ID) {
+			assert(!wasActive);
+			att->setEndPosition(text.getCursorForPosition(currentEditingPosition));
+			wasActive = true;
+		}
+	}
+
+	Bold attr(&text);
+	if(!wasActive) {
+		m.log() << "Bold ON!";
+		text.attributeOn(attr, currentEditingPosition);
+	}
+	else {
+		m.log() << "Bold OFF!!";
+		text.attributeOff(attr, currentEditingPosition);
+	}
+
+	debugDump(std::cerr);
+}
+
+std::ostream& Document::debugDump(std::ostream& debugStream) const {
+	debugStream << "**** DOCUMENT DUMP ****" << std::endl;
+	debugStream << "Current document editing position: " << currentEditingPosition << std::endl;
+	text.debugDump(debugStream);
+	return debugStream;
 }
 
 void Document::left() {
@@ -63,10 +99,9 @@ void Document::insertChar(char c) {
 
 	size_t afterInsert = text.size();
 
-	// debugDump();
-
 	assert(afterInsert == (beforeInsert+1));
 	defragCompleted = false;
+	debugDump(std::cerr);
 }
 
 void Document::deleteAtCurrentPos() {
@@ -112,7 +147,8 @@ void Document::render(win::Window& w) {
 
 	for(size_t currentRenderPos = 0; currentRenderPos < text.size(); currentRenderPos++) {
 
-		auto activeAttributes = text.getAttributesForPosition(currentEditingPosition);
+		auto activeAttributes = text.getAttributesForPosition(currentRenderPos);
+		m.log() << "Attributi alla posizione " << currentRenderPos << " = " << activeAttributes.size();
 		for(auto att : activeAttributes) {
 			if(att->start().positionAbsolute == currentRenderPos) {
 				// attribute on
@@ -145,4 +181,7 @@ void Document::render(win::Window& w) {
 		w.print("_");
 		w.deactivateBlinking();
 	}
+
+	w.attributeOff(A_BOLD);
+	w.attributeOff(A_UNDERLINE);
 }

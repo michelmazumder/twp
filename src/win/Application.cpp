@@ -6,7 +6,7 @@
 using namespace win;
 
 Application::Application(const std::string& _appName, const util::VersionDataObject& _version)
-	: appName(_appName), version(_version), m3d::Thread(_appName) {
+	: appName(_appName), version(_version), m3d::Thread(_appName), mainWindow(nullptr) {
 	util::MethodLogger m(__PRETTY_FUNCTION__);
 	initscr();			/* Start curses mode 		*/
     raw();				/* Line buffering disabled	*/
@@ -32,9 +32,11 @@ Window *Application::createMainWindow() {
 void Application::theJob() {
 	util::MethodLogger m(__PRETTY_FUNCTION__);
 
-	if(mainWindow != NULL) {
+	if(mainWindow == nullptr) {
 		mainWindow = createMainWindow();
 	}
+
+	onInitComplete();
 
 	// halfdelay(1); // 1/10 di sec
 	halfdelay(3);

@@ -45,14 +45,12 @@ void Chunk::resetBeginIfNeeded() {
 }
 
 void Chunk::compact() {
-	util::MethodLogger m(__PRETTY_FUNCTION__);
 	size_t beforeSize = size();
 	if(size() == 0) {
 		_begin = 0;
 		_end = 0;
 	}
 	else if(_begin > 0) {
-		m.log() << "begin = " << _begin;
 		size_t gapSize = _begin;
 		for(size_t i = 0; i < size(); i++) {
 			_unicodeChunk[i] = _unicodeChunk[i+_begin];
@@ -61,8 +59,6 @@ void Chunk::compact() {
 		_end -= _begin;
 		_begin = 0;
 	}
-	m.log() << "Now compacted chunk:";
-	debugDump();
 	assert(_begin <= _end);
 	assert(_end <= CHUNK_SIZE);
 	assert(beforeSize == size());
@@ -80,11 +76,6 @@ const CharType& Chunk::get(size_t position) const {
 }
 
 void Chunk::append(CharType character) {
-
-	if(_end < _begin) {
-		debugDump();
-	}
-
 	assert(_end >= _begin);
 
 	if(_end < CHUNK_SIZE) {
@@ -195,16 +186,17 @@ void Chunk::insertAt(CharType character, size_t position) {
 	}
 }
 
-void Chunk::debugDump() const {
-	cerr << "\t\tsize = " << size() << endl;
-	cerr << "\t\tbeg = " << _begin << endl;
-	cerr << "\t\tend = " << _end << endl;
-	cerr << "\t\taddr = " << this << endl;
-	cerr << "\t\tprev = " << _previous << endl;
-	cerr << "\t\tnext = " << _next << endl;
-	cerr << "\t\ttext = ";
+std::ostream& Chunk::debugDump(std::ostream& debugStream) const {
+	debugStream << "\t\tsize = " << size() << endl;
+	debugStream << "\t\tbeg = " << _begin << endl;
+	debugStream << "\t\tend = " << _end << endl;
+	debugStream << "\t\taddr = " << this << endl;
+	debugStream << "\t\tprev = " << _previous << endl;
+	debugStream << "\t\tnext = " << _next << endl;
+	debugStream << "\t\ttext = ";
 	for(size_t i = 0; i < size(); i++)
-		cerr << (char) get(i);
-	cerr << endl;
+		debugStream << (char) get(i);
+	debugStream << endl;
+	return debugStream;
 }
 

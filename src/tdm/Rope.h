@@ -2,6 +2,7 @@
 
 #include "tdm/Chunk.h"
 #include <string>
+#include "util/Debuggable.h"
 
 namespace tdm {
 
@@ -32,7 +33,7 @@ namespace tdm {
 		size_t size() const;
 		const CharType& get(size_t position) const;
 
-		void debugDump() const;
+		virtual std::ostream& debugDump(std::ostream& debugStream) const;
 		// defrag completed
 		bool defrag();
 		std::string toString() const;

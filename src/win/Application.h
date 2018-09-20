@@ -22,7 +22,7 @@ namespace win {
 		virtual void theJob();
 		virtual Window *createMainWindow();
 		virtual void idleCicle();
-
+		virtual void onInitComplete() = 0;
 
 	public:
 		virtual void onKeyPressed(int key) = 0;

@@ -5,6 +5,7 @@
 #include <memory>
 #include "win/Window.h"
 #include "tdm/AttributedRope.h"
+#include "util/Debuggable.h"
 
 namespace twp {
 
@@ -27,11 +28,14 @@ namespace twp {
 		void home();
 		void end();
 		void toggleUnderline();
+		void toggleBold();
 		
 		void save();
-		void debugDump();
+
 		void deleteAtCurrentPos();
 		void defrag();
+
+		virtual std::ostream& debugDump(std::ostream& debugStream) const;
 	};
 
 }

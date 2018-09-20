@@ -18,6 +18,13 @@ win::Window *TwpApplication::createMainWindow() {
 	return new win::BorderedWindow(initPoint, sz);
 }
 
+void TwpApplication::onInitComplete() {
+	util::MethodLogger m(__PRETTY_FUNCTION__);
+	mainWindow->repaint();
+	document.render(*mainWindow);
+	refresh();
+}
+
 void TwpApplication::onKeyPressed(int key) {
 	util::MethodLogger m(__PRETTY_FUNCTION__);
 	m.log() << "||| Key pressed = " << keyname(key) << " . " << key;
@@ -26,6 +33,12 @@ void TwpApplication::onKeyPressed(int key) {
 	//document.debugDump();
 
 	switch(key) {
+		case CTRL('r'):
+			// for document rendering
+			break;
+		case CTRL('d'):
+			document.debugDump(std::cerr);
+			break;
 		case CTRL('q'):
 			m.log() << "REQUEST STOP!";
 			requestStop();
@@ -52,6 +65,9 @@ void TwpApplication::onKeyPressed(int key) {
 			break;
 		case CTRL('u'):
 			document.toggleUnderline();
+			break;
+		case CTRL('b'):
+			document.toggleBold();
 			break;
 
 		default:

@@ -3,12 +3,13 @@
 #include "tdm/CharType.h"
 #include <cstddef>
 #include <exception>
+#include "util/Debuggable.h"
 
 namespace tdm {
 
 	class InvalidPositionException : public std::exception {};
 
-	class Chunk {
+	class Chunk : public util::Debuggable {
 			static const int CHUNK_SIZE = 8;
 
 			CharType _unicodeChunk[CHUNK_SIZE];
@@ -47,6 +48,6 @@ namespace tdm {
 			void trunkAt(size_t position);
 
 			void compact();
-			void debugDump() const;
+			virtual std::ostream& debugDump(std::ostream& debugStream) const;
 	};
 };
