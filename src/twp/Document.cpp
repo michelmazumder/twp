@@ -5,9 +5,12 @@
 using namespace twp;
 
 
+ViewPort::ViewPort() : firstPositionOnRope(0)
+{}
+
 Document::Document() 
-	: currentEditingPosition(0), defragCompleted(true) {
-}
+	: currentEditingPosition(0), defragCompleted(true) 
+{}
 
 void Document::toggleUnderline() {
 	// recupero tutti gli attributi attivi nella currentEditingPosition

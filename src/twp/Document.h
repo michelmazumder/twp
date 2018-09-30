@@ -14,12 +14,14 @@ namespace twp {
 	class ViewPort {
 		size_t firstPositionOnRope;
 		std::vector<std::string> lines;
+		std::vector<size_t> beginOfLineReferencingPosition;
 
 		// riga x colonna x valore attributo
 		std::vector<std::vector<std::vector<int>>> attron;
 		std::vector<std::vector<std::vector<int>>> attroff;
 
 	public:
+		ViewPort();
 		void render(win::Window& w) const;
 	};
 
@@ -31,6 +33,7 @@ namespace twp {
 		tdm::AttributedRope text;
 		size_t currentEditingPosition;
 		bool defragCompleted;
+		ViewPort view;
 
 	public:
 		Document();
