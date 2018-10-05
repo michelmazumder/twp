@@ -188,3 +188,58 @@ void Document::render(win::Window& w) {
 	w.attributeOff(A_BOLD);
 	w.attributeOff(A_UNDERLINE);
 }
+
+void ViewPort::render(win::Window& w) const {
+	util::MethodLogger m(__PRETTY_FUNCTION__);
+	w.moveCursorTo(win::Point(0,0));
+
+	for(size_t currentRenderPos = 0; currentRenderPos < text.size(); currentRenderPos++) {
+
+		auto activeAttributes = text.getAttributesForPosition(currentRenderPos);
+		m.log() << "Attributi alla posizione " << currentRenderPos << " = " << activeAttributes.size();
+		for(auto att : activeAttributes) {
+			if(att->start().positionAbsolute == currentRenderPos) {
+				// attribute on
+				m.log() << ">>>>>> attribute on!";
+				w.attributeOn(att->getNcursesValue());
+			}
+			if(att->end().positionAbsolute == currentRenderPos) {
+				// attribute off
+				m.log() << "<<<<<< attribute off!";
+				w.attributeOff(att->getNcursesValue());
+			}
+		}
+		
+		if(currentRenderPos == currentEditingPosition) {
+			w.activateBlinking();
+			cursorDone = true;
+		}
+
+		std::string tmp;
+		tmp += (char) text.get(currentRenderPos);
+		w.print(tmp);
+		
+		if(currentRenderPos == currentEditingPosition) {
+			w.deactivateBlinking();
+		}
+	}
+	w.attributeOff(A_BOLD);
+	w.attributeOff(A_UNDERLINE);
+}
+
+/*
+	class ViewPort {
+		size_t firstPositionOnRope;
+		std::vector<std::string> lines;
+		std::vector<size_t> beginOfLineReferencingPosition;
+
+		// riga x colonna x valore attributo
+		std::vector<std::vector<std::vector<int>>> attron;
+		std::vector<std::vector<std::vector<int>>> attroff;
+
+	public:
+		ViewPort();
+		void render(win::Window& w) const;
+	};
+
+*/
