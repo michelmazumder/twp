@@ -189,6 +189,7 @@ void Document::render(win::Window& w) {
 	w.attributeOff(A_UNDERLINE);
 }
 
+/*
 void ViewPort::render(win::Window& w) const {
 	util::MethodLogger m(__PRETTY_FUNCTION__);
 	w.moveCursorTo(win::Point(0,0));
@@ -226,6 +227,9 @@ void ViewPort::render(win::Window& w) const {
 	w.attributeOff(A_BOLD);
 	w.attributeOff(A_UNDERLINE);
 }
+*/
+
+
 
 /*
 	class ViewPort {

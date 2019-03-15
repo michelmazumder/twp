@@ -9,10 +9,10 @@ Application::Application(const std::string& _appName, const util::VersionDataObj
 	: appName(_appName), version(_version), m3d::Thread(_appName), mainWindow(nullptr) {
 	util::MethodLogger m(__PRETTY_FUNCTION__);
 	initscr();			/* Start curses mode 		*/
+	cbreak();	/* Line buffering disabled. pass on everything */
+	noecho();	// uppress the automatic echoing of typed characters
     raw();				/* Line buffering disabled	*/
 	keypad(stdscr, TRUE);		/* We get F1, F2 etc..		*/
-	noecho();
-	cbreak();	/* Line buffering disabled. pass on everything */
 	curs_set(0); // cursor invisible
 }
 

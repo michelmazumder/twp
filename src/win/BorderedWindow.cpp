@@ -20,6 +20,7 @@ void BorderedWindow::repaint() {
 		util::MethodLogger m(__PRETTY_FUNCTION__);
 		m.log() << "Disegno BORDO";
 		box(ncursesWindow,0,0);
+		refresh();
 		wrefresh(ncursesWindow);
 	}
 	contentPane.repaint();
