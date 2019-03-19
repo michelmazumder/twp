@@ -2,7 +2,7 @@
 
 int main(int argc, char *argv[]) {
 
-	DoppiaFinestra app;
+	TwpApplication app;
 	app.start();
 	app.join();
 

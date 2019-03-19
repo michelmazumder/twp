@@ -12,7 +12,7 @@ Document::Document()
 	: currentEditingPosition(0), defragCompleted(true) 
 {}
 
-void Document::toggleUnderline() {
+bool Document::toggleUnderline() {
 	// recupero tutti gli attributi attivi nella currentEditingPosition
 	util::MethodLogger m(__PRETTY_FUNCTION__);
 	m.log() << "Current editing position = " << currentEditingPosition;
@@ -26,20 +26,24 @@ void Document::toggleUnderline() {
 		}
 	}
 
+	bool rt;
 	Underline attr(&text);
 	if(!wasActive) {
 		m.log() << "Underline ON!";
 		text.attributeOn(attr, currentEditingPosition);
+		rt = true;
 	}
 	else {
 		m.log() << "Underline OFF!!";
 		text.attributeOff(attr, currentEditingPosition);
+		rt = false;
 	}
 
 	debugDump(std::cerr);
+	return rt;
 }
 
-void Document::toggleBold() {
+bool Document::toggleBold() {
 	// recupero tutti gli attributi attivi nella currentEditingPosition
 	util::MethodLogger m(__PRETTY_FUNCTION__);
 	m.log() << "Current editing position = " << currentEditingPosition;
@@ -53,17 +57,21 @@ void Document::toggleBold() {
 		}
 	}
 
+	bool rt;
 	Bold attr(&text);
 	if(!wasActive) {
 		m.log() << "Bold ON!";
 		text.attributeOn(attr, currentEditingPosition);
+		rt = true;
 	}
 	else {
 		m.log() << "Bold OFF!!";
 		text.attributeOff(attr, currentEditingPosition);
+		rt = false;
 	}
 
 	debugDump(std::cerr);
+	return rt;
 }
 
 std::ostream& Document::debugDump(std::ostream& debugStream) const {
@@ -180,6 +188,22 @@ void Document::render(win::Window& w) {
 	}
 
 	if(!cursorDone) {
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
+		m.log() << " * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *";
 		w.activateBlinking();
 		w.print("_");
 		w.deactivateBlinking();

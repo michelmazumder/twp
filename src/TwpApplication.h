@@ -4,11 +4,19 @@
 #include "twp/Document.h"
 
 
+struct TwpStatusBar {
+	bool underline;
+	bool bold;
+	int currentPos;
+};
 
 class TwpApplication : public win::Application {
 
 	private:
 		twp::Document document; // the model
+		win::Window *statusWindow;
+		TwpStatusBar _statusBar;
+		
 	
 	protected:
 		// the view
@@ -17,7 +25,12 @@ class TwpApplication : public win::Application {
 		virtual void onInitComplete();
 
 	public:
+		inline TwpStatusBar& statusBar() { return _statusBar; }
+
 		TwpApplication();
+		virtual ~TwpApplication();
+		void status(const std::string &msg);
+		void refreshStatus();
 
 		// caratteri speciali?
 		bool isNormalChar(int c) { return true; }

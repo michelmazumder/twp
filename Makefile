@@ -16,7 +16,8 @@ twp: src/main.cpp $(DEST_DIR)/obj/TwpApplication.o \
 		$(DEST_DIR)/obj/twp_Document.o $(DEST_DIR)/obj/twp_Attributes.o \
 		$(DEST_DIR)/obj/util_MethodLogger.o $(DEST_DIR)/obj/util_StringExtensions.o $(DEST_DIR)/obj/util_VersionDataObject.o \
 		$(DEST_DIR)/obj/win_Screen.o $(DEST_DIR)/obj/win_Window.o $(DEST_DIR)/obj/win_Application.o $(DEST_DIR)/obj/win_BorderedWindow.o \
-		$(DEST_DIR)/obj/tdm_Chunk.o $(DEST_DIR)/obj/tdm_Rope.o $(DEST_DIR)/obj/tdm_AttributedRope.o
+		$(DEST_DIR)/obj/tdm_Chunk.o $(DEST_DIR)/obj/tdm_Rope.o $(DEST_DIR)/obj/tdm_AttributedRope.o \
+		$(DEST_DIR)/obj/tdm_TreeAttributedRope.o
 	c++ $(DEST_DIR)/obj/* src/main.cpp $(LPPFLAGS) -o $(TARGET_EXE_NAME)
 
 $(DEST_DIR)/obj/TwpApplication.o: src/TwpApplication.cpp src/TwpApplication.h
@@ -67,3 +68,5 @@ $(DEST_DIR)/obj/tdm_Rope.o: src/tdm/CharType.h src/tdm/Rope.h src/tdm/Rope.cpp
 $(DEST_DIR)/obj/tdm_AttributedRope.o: src/tdm/CharType.h src/tdm/AttributedRope.h src/tdm/AttributedRope.cpp
 	c++ $(CPPFLAGS) -c src/tdm/AttributedRope.cpp -o $(DEST_DIR)/obj/tdm_AttributedRope.o
 
+$(DEST_DIR)/obj/tdm_TreeAttributedRope.o: src/tdm/CharType.h src/tdm/TreeAttributedRope.h src/tdm/TreeAttributedRope.cpp
+	c++ $(CPPFLAGS) -c src/tdm/TreeAttributedRope.cpp -o $(DEST_DIR)/obj/tdm_TreeAttributedRope.o

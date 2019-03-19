@@ -44,8 +44,8 @@ namespace twp {
 		void right();
 		void home();
 		void end();
-		void toggleUnderline();
-		void toggleBold();
+		bool toggleUnderline();
+		bool toggleBold();
 		
 		void save();
 

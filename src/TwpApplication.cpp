@@ -4,9 +4,23 @@
 #include "win/BorderedWindow.h"
 
 TwpApplication::TwpApplication()
-	: win::Application("twp", util::VersionDataObject("0.1.1")) 
-{}
+	: win::Application("twp", util::VersionDataObject("0.1.1")), statusWindow(nullptr)
+{
+	util::MethodLogger m(__PRETTY_FUNCTION__);
+	// win::Size sz(win::getScreenHeight() - 1, win::getScreenWidth());
+	win::Size sz(5, win::getScreenWidth());
+	m.log() << "win size => w:" << sz.width << " h:" << sz.height;
+	win::Point initPoint(win::getScreenHeight() - 5, 0);
+	m.log() << "init point => r:" << initPoint.row << " c:" << initPoint.col;
+	statusWindow = new win::BorderedWindow(initPoint, sz);
+}
 
+TwpApplication::~TwpApplication() {
+	if(statusWindow != nullptr) {
+		delete statusWindow;
+		statusWindow = nullptr;
+	}
+}
 
 win::Window *TwpApplication::createMainWindow() {
 	util::MethodLogger m(__PRETTY_FUNCTION__);
@@ -21,8 +35,11 @@ win::Window *TwpApplication::createMainWindow() {
 void TwpApplication::onInitComplete() {
 	util::MethodLogger m(__PRETTY_FUNCTION__);
 	mainWindow->repaint();
-	document.render(*mainWindow);
+	statusWindow->repaint();
 	refresh();
+	mainWindow->moveCursorTo(win::Point(0,0));
+	document.render(*mainWindow);
+	wrefresh(stdscr);
 }
 
 void TwpApplication::onKeyPressed(int key) {
@@ -64,10 +81,22 @@ void TwpApplication::onKeyPressed(int key) {
 			document.deleteAtCurrentPos();
 			break;
 		case CTRL('u'):
-			document.toggleUnderline();
+			if(document.toggleUnderline()) {
+				statusBar().underline = true;
+			}
+			else {
+				statusBar().underline = false;
+			}
+			refreshStatus();
 			break;
 		case CTRL('b'):
-			document.toggleBold();
+			if(document.toggleBold()) {
+				statusBar().bold = true;
+			}
+			else {
+				statusBar().bold = false;
+			}
+			refreshStatus();
 			break;
 
 		default:
@@ -79,6 +108,27 @@ void TwpApplication::onKeyPressed(int key) {
 	}
 	m.log() << "document render";
 	document.render(*mainWindow);
+}
+
+void TwpApplication::status(const std::string &msg) {
+	if(statusWindow != nullptr) {
+		statusWindow->print(msg);
+		statusWindow->repaint();
+	}
+}
+
+void TwpApplication::refreshStatus() {
+	if(statusWindow != nullptr) {
+
+		std::string statusMsg;
+		statusMsg += "Bold ";
+		statusMsg += (statusBar().bold ? "[ON]" : "[Off]");
+		statusMsg += "\nUnderline ";
+		statusMsg += (statusBar().underline ? "[ON]" : "[Off]");
+
+		statusWindow->print(statusMsg, win::Point(0,0));
+		statusWindow->repaint();
+	}
 }
 
 void TwpApplication::idleCicle() {
@@ -119,6 +169,7 @@ void DoppiaFinestra::onKeyPressed(int key) {
 	switch(key) {
 		case CTRL('r'):
 			// for document rendering
+			refresh();
 			break;
 		case CTRL('d'):
 			document.debugDump(std::cerr);
