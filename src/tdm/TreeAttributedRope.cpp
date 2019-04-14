@@ -7,15 +7,6 @@
 using namespace tdm;
 using namespace std;
 
-// -----------   Element   ---------------
-
-bool TreeAttributedRope::Element::ownsPosition(size_t position) const {
-	return (_startingPos <= position) && ((_startingPos + length()) > position);
-}
-
-bool TreeAttributedRope::Element::isPerfectlyBefore(const Element& b) const {
-	return b._startingPos == (_startingPos + length() + 1);	
-}
 
 // -----------   Text  ------------
 
@@ -24,19 +15,10 @@ bool TreeAttributedRope::Text::appendChar(CharType character) {
 	return true;
 }
 
-bool TreeAttributedRope::Text::insertAt(CharType character, size_t position) {
-	if(position < _startingPos) {
-		return false;
-	}
-	if(position > (_startingPos + length())) {
-		return false;
-	}
-
-	size_t relativePos = position - _startingPos;
-	assert(relativePos >= 0);
-	assert(relativePos < length());
-	char c = (char) character;
-	_text.insert(relativePos, 1, c);
+bool TreeAttributedRope::Text::insertAt(CharType character, size_t relativePosition) {
+	assert(relativePosition >= 0);
+	assert(relativePosition < length());
+	_text.insert(relativePosition, 1, string(static_cast<char>(character)));
 	return true;
 }
 
@@ -51,22 +33,44 @@ void TreeAttributedRope::Text::render(win::Window& win) const {
 // ----------   Container   -----------
 
 size_t TreeAttributedRope::Container::length() const {
+	size_t totalSize = 0;
 
+	for(auto elem : _subElements) {
+		totalSize += elem->length();
+	}
+
+	return totalSize;
 }
 
 void TreeAttributedRope::Container::render(win::Window& win) const {
-	
+
 }
 
 std::shared_ptr<TreeAttributedRope::Text::Element> TreeAttributedRope::Container::getElementAt(size_t position) const {
-	for(auto mapEntry : _subElements) {
-		if(mapEntry.second->ownsPosition(position)) {
-			return mapEntry.second;
+	assert(position >= 0);
+	assert(position < length());
+
+	size_t acc = 0;
+	for(auto elem : _subElements) {
+		if(position >= acc && position < (acc + elem->length())) {
+			return elem;
+		}
+		else {
+			acc += elem->length();
 		}
 	}
+
+	assert(false);
 	return std::shared_ptr<TreeAttributedRope::Text::Element>{};
 }
 
+bool TreeAttributedRope::Container::appendNewSubElement(std::shared_ptr<Element> newSubElement) {
+	if(isPerfectlyBefore(*newSubElement)) {
+		_subElements.push_back(newSubElement);
+		return true;
+	}
+	return false;
+}
 
 
 

@@ -1,4 +1,5 @@
 #include "TwpApplication.h"
+#include <panel.h>
 
 int main(int argc, char *argv[]) {
 

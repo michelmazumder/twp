@@ -23,10 +23,13 @@ namespace tdm {
 
 		class Container : Element {
 		protected:
-			// Insiemi (startpos..len) disgiunti e contigui da verificare in fase di inserimento
+			// Gli elementi hanno una copertura uniforme del dominio _startingPos... + lenght()
 			std::list<std::shared_ptr<Element>> _subElements;
 		public:
 			std::shared_ptr<Element> getElementAt(size_t position) const;			
+			virtual size_t length() const;
+			virtual void render(win::Window& win) const;
+			virtual bool appendNewSubElement(std::shared_ptr<Element> newSubElement);
 		};
 
 		class Text : public Element {
@@ -40,7 +43,8 @@ namespace tdm {
 		};
 
 		class Bold : public Container {
-
+		public:
+			virtual size_t length() const;
 		};
 
 		class Underline : public Container {
